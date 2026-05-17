@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "src/abc457",
+    "src/abc458",
+]
+resolver = "2"

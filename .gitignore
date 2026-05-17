@@ -1,0 +1,13 @@
+# 秘密情報（コミット除外）
+.env
+.cargo-compete/cookies.jsonl
+
+# オペレーションログ
+operation.md
+
+# コンパイルされたファイル
+target/
+debug/
+
+# 他のファイル
+Cargo.lock

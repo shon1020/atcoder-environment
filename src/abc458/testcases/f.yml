@@ -1,0 +1,40 @@
+---
+type: Batch
+timelimit: ~
+match: Lines
+
+cases:
+  - name: sample1
+    in: |
+      3 2
+      aa
+      ab
+    out: |
+      17474
+  - name: sample2
+    in: |
+      1 1
+      ab
+    out: |
+      26
+  - name: sample3
+    in: |
+      1000000000 10
+      contest
+      tester
+      error
+      orange
+      angel
+      elegant
+      antitese
+      sextuple
+      pleasure
+      surely
+    out: |
+      698570468
+
+extend:
+  - type: Text
+    path: "./f"
+    in: /in/*.txt
+    out: /out/*.txt

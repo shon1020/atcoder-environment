@@ -1,0 +1,30 @@
+---
+type: Batch
+timelimit: ~
+match: Lines
+
+cases:
+  - name: sample1
+    in: |
+      chemotherapy
+      3
+    out: |
+      mother
+  - name: sample2
+    in: |
+      thermometer
+      4
+    out: |
+      mom
+  - name: sample3
+    in: |
+      burger
+      1
+    out: |
+      urge
+
+extend:
+  - type: Text
+    path: "./a"
+    in: /in/*.txt
+    out: /out/*.txt
