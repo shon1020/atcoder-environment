@@ -1,6 +1,7 @@
 use itertools::Itertools;
 use proconio::{input, marker::Chars};
 use std::collections::HashMap;
+
 fn main() {
     #[cfg(debug_assertions)]
     unsafe {
@@ -11,42 +12,46 @@ fn main() {
     }
 
     for _ in 0..t {
-        let mut map = HashMap::new();
         input! {
             s: Chars,
         }
-        for c in &s {
-            *map.entry(c).or_insert(0) += 1;
+
+        let mut cnt_vec = vec![0; 27];
+        let n = s.len();
+        for c in s {
+            cnt_vec[c as usize - 'a' as usize + 1] += 1;
         }
-        let mut cad_max = 0;
-        let mut kind = Vec::new();
-        for (key, v) in &map {
-            if *v > cad_max {
-                cad_max = *v;
-            }
-            kind.push(*key);
-        }
-        if cad_max > ((s.len() + 1) / 2) {
+
+        if *cnt_vec.iter().max().unwrap() > (n + 1) / 2 {
             println!("No");
             continue;
         }
-        let mut kind_cnt = kind.len();
-        let mut ans_vec = Vec::new();
-        let mut idx = 0;
-        while kind_cnt > 0 {
-            let now_idx = idx % kind.len();
-            let cnt = *map.get(&kind[now_idx]).unwrap();
-            if cnt > 0 {
-                ans_vec.push(*kind[now_idx]);
-                *map.get_mut(&kind[now_idx]).unwrap() -= 1;
-                if *map.get(&kind[now_idx]).unwrap() == 0 {
-                    kind_cnt -= 1;
+        let mut prev: usize = 0;
+        let mut ans = Vec::new();
+        loop {
+            let mut v_max = 0;
+            let mut idx = 0;
+
+            for i in 1..27 {
+                if i == prev {
+                    continue;
+                }
+                if cnt_vec[i as usize] > v_max {
+                    idx = i;
+                    v_max = cnt_vec[i as usize];
                 }
             }
-            idx += 1;
+
+            if idx == 0 {
+                break;
+            }
+            cnt_vec[idx as usize] -= 1;
+            let st = (b'a' + (idx - 1) as u8) as char;
+            ans.push(st);
+            prev = idx;
         }
         println!("Yes");
-        println!("{}", ans_vec.iter().join(""));
+        println!("{}", ans.iter().join(""));
     }
 }
 
