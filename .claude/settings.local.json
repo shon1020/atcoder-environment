@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "WebFetch(domain:paruma184.hatenablog.com)",
-      "WebFetch(domain:atcoder.jp)",
-      "WebFetch(domain:docs.rs)"
-    ]
-  }
-}
