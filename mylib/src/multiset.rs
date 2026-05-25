@@ -277,7 +277,7 @@ pub mod btree_multiset {
             if self.counter == 0 {
                 if let Some((key, &cnt)) = self.range.next_back() {
                     self.last = Some(key);
-                    self.counter = cnt;
+                    self.counter = cnt - 1;
                     Some(key)
                 } else {
                     None
@@ -313,11 +313,9 @@ pub mod btree_multiset {
 
 #[cfg(test)]
 mod tests {
-    use std::ops::Mul;
+    use std::ops::Bound::{Excluded, Included};
 
     use crate::multiset::btree_multiset::MultiSet;
-
-    use super::btree_multiset;
 
     #[test]
     fn test_new() {
@@ -366,7 +364,7 @@ mod tests {
 
         set.insert(1);
         assert!(!set.is_empty());
-        assert_eq!(set.len(), 2);
+        assert_eq!(set.len(), 1);
         assert_eq!(set.size(), 2);
         assert!(set.contains(&1));
         assert_eq!(set.count(&1), 2);
@@ -407,7 +405,7 @@ mod tests {
         let mut set1: MultiSet<i32> = vec![1, 1, 2].into_iter().collect();
         let mut set2: MultiSet<i32> = vec![2, 2, 3].into_iter().collect();
 
-        let mergeset = set1.merge(&mut set2);
+        set1.merge(&mut set2);
         assert_eq!(set1, MultiSet::from(vec![1, 1, 2, 2, 2, 3]));
         assert_eq!(set1.len(), 3);
         assert_eq!(set1.size(), 6);
@@ -442,5 +440,70 @@ mod tests {
         assert_eq!(set.pop_first(), None);
         assert_eq!(set.pop_last(), None);
         assert!(set.is_empty());
+    }
+
+    #[test]
+    fn test_remove() {
+        let mut set: MultiSet<i32> = vec![1, 1, 2].into_iter().collect();
+
+        assert!(set.remove(&1));
+        assert_eq!(set.size(), 2);
+        assert_eq!(set.len(), 2);
+        assert_eq!(set.count(&1), 1);
+
+        assert!(set.remove(&1));
+        assert_eq!(set.size(), 1);
+        assert_eq!(set.len(), 1);
+        assert!(!set.contains(&1));
+        assert_eq!(set.count(&1), 0);
+
+        assert!(!set.remove(&3));
+        assert_eq!(set.size(), 1);
+        assert_eq!(set, MultiSet::from(vec![2]));
+    }
+
+    #[test]
+    fn test_lower_bound() {
+        let set: MultiSet<i32> = vec![1, 2, 2, 4].into_iter().collect();
+
+        assert_eq!(set.lower_bound(Included(&0)), Some(&1));
+        assert_eq!(set.lower_bound(Included(&2)), Some(&2));
+        assert_eq!(set.lower_bound(Excluded(&2)), Some(&4));
+        assert_eq!(set.lower_bound(Included(&5)), None);
+    }
+
+    #[test]
+    fn test_upper_bound() {
+        let set: MultiSet<i32> = vec![1, 2, 2, 4].into_iter().collect();
+
+        assert_eq!(set.upper_bound(Included(&4)), Some(&4));
+        assert_eq!(set.upper_bound(Excluded(&4)), Some(&2));
+        assert_eq!(set.upper_bound(Included(&2)), Some(&2));
+        assert_eq!(set.upper_bound(Excluded(&1)), None);
+    }
+
+    #[test]
+    fn test_iter() {
+        let set: MultiSet<i32> = vec![3, 1, 2, 2].into_iter().collect();
+
+        let values: Vec<i32> = set.iter().copied().collect();
+        assert_eq!(values, vec![1, 2, 2, 3]);
+
+        let values_rev: Vec<i32> = set.iter().rev().copied().collect();
+        assert_eq!(values_rev, vec![3, 2, 2, 1]);
+    }
+
+    #[test]
+    fn test_range() {
+        let set: MultiSet<i32> = vec![1, 2, 2, 3, 4, 4, 5].into_iter().collect();
+
+        let values: Vec<i32> = set.range(2..=4).copied().collect();
+        assert_eq!(values, vec![2, 2, 3, 4, 4]);
+
+        let values_rev: Vec<i32> = set.range(2..=4).rev().copied().collect();
+        assert_eq!(values_rev, vec![4, 4, 3, 2, 2]);
+
+        let excluded: Vec<i32> = set.range((Excluded(2), Excluded(5))).copied().collect();
+        assert_eq!(excluded, vec![3, 4, 4]);
     }
 }
