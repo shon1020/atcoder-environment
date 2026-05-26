@@ -7,5 +7,6 @@ members = [
     "src/awc0073",
     "src/awc0074",
     "src/abc459",
+    "src/abc036",
 ]
 resolver = "2"
