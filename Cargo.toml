@@ -8,5 +8,7 @@ members = [
     "src/awc0074",
     "src/abc459",
     "src/abc036",
+    "src/tessoku-book",
+    "src/practice2",
 ]
 resolver = "2"
