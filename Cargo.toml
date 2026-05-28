@@ -10,5 +10,6 @@ members = [
     "src/abc036",
     "src/tessoku-book",
     "src/practice2",
+    "src/past202109-open",
 ]
 resolver = "2"

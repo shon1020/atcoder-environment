@@ -1,36 +1,38 @@
 use ac_library::FenwickTree;
-use proconio::input;
-use proconio::marker::Usize1;
-
+use itertools::Itertools;
+use num_traits::pow;
+use proconio::{input, marker::Usize1};
+use std::collections::{BinaryHeap, HashMap};
 define_queries! {
     enum Query: usize {
-        0 => Push { p: usize, x:usize },
-        1 => Range { l: usize, r: usize },
+        1 => Output { k: usize },
+        2 => Reverse { k: usize },
     }
 }
 
 fn main() {
-    #[cfg(debug_assertions)]
-    unsafe {
-        backtrace_on_stack_overflow::enable()
-    };
     input! {
-      n: usize,
-      q: usize,
-      a: [usize; n],
-      queries: [Query; q],
+        n: usize,
+        q: usize,
+        queries: [Query; q],
     }
-    let mut bit: FenwickTree<usize> = FenwickTree::new(n, 0);
-    for i in 0..n {
-        bit.add(i, a[i]);
-    }
+
+    let mut vec: Vec<i64> = (1..=2 * n).into_iter().map(|i| i as i64).collect_vec();
+    let mut bit: FenwickTree<i64> = FenwickTree::new(2 * n, 0i64);
+
     for query in queries {
         match query {
-            Query::Push { p, x } => {
-                bit.add(p, x);
+            Query::Output { k } => {
+                let ans = if bit.sum(0..k) % 2 == 0 {
+                    vec[k - 1]
+                } else {
+                    vec[2 * n - k]
+                };
+                println!("{}", ans);
             }
-            Query::Range { l, r } => {
-                println!("{}", bit.sum(l..r));
+            Query::Reverse { k } => {
+                bit.add(n - k, 1);
+                bit.add(n + k, -1);
             }
         }
     }
